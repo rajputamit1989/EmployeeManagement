@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0-windows</TargetFramework>
@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EmployeeManagement.BusinessModel\EmployeeManagement.BusinessModel.csproj" />
+    <ProjectReference Include="..\EmployeeManagement.ServiceGateway\EmployeeManagement.ServiceGateway.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,6 +4,15 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+	  
   </PropertyGroup>
+	
+  <ItemGroup>
+    <PackageReference Include="System.ComponentModel.Composition" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EmployeeManagement.Infrastructure\EmployeeManagement.Infrastructure.csproj" />
+  </ItemGroup>
 
 </Project>
