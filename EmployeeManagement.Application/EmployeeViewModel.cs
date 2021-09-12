@@ -81,7 +81,7 @@ namespace EmployeeManagement.Application
             get
             {
                 return _deleteEmployeeCommand ??= new RelayCommand(
-                    async param => await DeleteEmployee((Employee) param),
+                    async param => await DeleteEmployee((Employee)param),
                     null);
             }
         }
@@ -144,38 +144,50 @@ namespace EmployeeManagement.Application
 
         public async Task DeleteEmployee(Employee employee)
         {
-            if (employee.Id> 0)
+            if (employee.Id > 0)
             {
                 await _employeeServiceGateway.DeleteEmployee(employee.Id);
                 Employees.Remove(employee);
             }
         }
 
+        /// <summary>
+        /// This fetches (and sets Employees property) from the system under different conditions like getting all employees, or by ID or by Name.
+        /// </summary>
+        /// <returns></returns>
         public async Task GetAndSetEmployees()
         {
-            if (!string.IsNullOrEmpty(_searchCriteria))
+            try
             {
-                //First check if user is searching by employee id
-
-                bool isValidInputId = Int32.TryParse(_searchCriteria, out int employeeSearchCriteriaId);
-                if (isValidInputId)
+                if (!string.IsNullOrEmpty(_searchCriteria))
                 {
-                    var employeeFound = await _employeeServiceGateway.GetEmployeeById(employeeSearchCriteriaId);
-                    Employees = employeeFound.Id != 0 ? new ObservableCollection<Employee>(){ employeeFound } : null;
+                    //First check if user is searching by employee id
+
+                    bool isValidInputId = Int32.TryParse(_searchCriteria, out int employeeSearchCriteriaId);
+                    if (isValidInputId)
+                    {
+                        var employeeFound = await _employeeServiceGateway.GetEmployeeById(employeeSearchCriteriaId);
+                        Employees = employeeFound.Id != 0 ? new ObservableCollection<Employee>() { employeeFound } : null;
+                        CurrentPage = 1;
+                        return;
+                    }
+
+                    //Next case :It is a search by employee name
+                    string name = _searchCriteria;
+                    var employeesFound = await _employeeServiceGateway.GetEmployeesByName(name);
+                    Employees = employeesFound.Any() ? new ObservableCollection<Employee>(employeesFound) : null;
                     CurrentPage = 1;
                     return;
-                }
 
-                //Next case :It is a search by employee name
-                string name = _searchCriteria;
-                var employeesFound = await _employeeServiceGateway.GetEmployeesByName(name);
-                    Employees = employeesFound.Any()?new ObservableCollection<Employee>(employeesFound):null;
-                    CurrentPage = 1;
-                return;
+                }
+                //Return all records if there is no search criteria
+                Employees = new ObservableCollection<Employee>(await _employeeServiceGateway.GetEmployees(_currentPage).ConfigureAwait(false));
 
             }
-            //Return all records if there is no search criteria
-            Employees = new ObservableCollection<Employee>(await _employeeServiceGateway.GetEmployees(_currentPage).ConfigureAwait(false));
+            catch (Exception e)
+            {
+                _dialogService.ShowErrorMessageBox("Error encountered while fetching data from service, Error Message : "+e.Message,"Error");
+            }
         }
     }
 }

@@ -44,20 +44,34 @@ namespace EmployeeManagement.Application
             _dialogService = dialogService;
             NewEmployee = new Employee();
         }
+
+        /// <summary>
+        /// Adds a new employee in the system
+        /// </summary>
+        /// <returns></returns>
         public async Task<Employee> AddNewEmployee()
         {
-            if (!IsValidEmployee())
+            try
             {
-                _dialogService.ShowErrorMessageBox("All fields are mandatory","Missing data");
-                return null;
-            }
-            var employeeAdded=await _employeeServiceGateway.AddEmployee(NewEmployee);
-            await _employeeViewModel.ResetEmployees();
+                if (!IsValidEmployee())
+                {
+                    _dialogService.ShowErrorMessageBox("All fields are mandatory", "Missing data");
+                    return null;
+                }
+                var employeeAdded = await _employeeServiceGateway.AddEmployee(NewEmployee);
+                await _employeeViewModel.ResetEmployees();
 
-            //Raise event when employee is added so that the corresponding view can be closed.
-            RequestClose?.Invoke(this, EventArgs.Empty);
-            _dialogService.ShowSuccessMessageBox("New employee added with Employee ID : "+employeeAdded.Id,"Success");
-            return employeeAdded;
+                //Raise event when employee is added so that the corresponding view can be closed.
+                RequestClose?.Invoke(this, EventArgs.Empty);
+                _dialogService.ShowSuccessMessageBox("New employee added with Employee ID : " + employeeAdded.Id, "Success");
+                return employeeAdded;
+            }
+            catch (Exception e)
+            {
+                    _dialogService.ShowErrorMessageBox("Error encountered while adding employee, Error Message : " + e.Message, "Error");
+            }
+
+            return null;
         }
 
         private bool IsValidEmployee()

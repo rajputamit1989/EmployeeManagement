@@ -2,6 +2,9 @@
 
 namespace EmployeeManagement.BusinessModel
 {
+    /// <summary>
+    /// Employee business entity with relevant fields
+    /// </summary>
     public class Employee : INotifyPropertyChanged
     {
         private int _id;

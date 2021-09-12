@@ -42,19 +42,34 @@ namespace EmployeeManagement.Application
             _employeeServiceGateway = employeeServiceGateway;
             _dialogService = dialogService;
         }
+
+        /// <summary>
+        /// Updates an existing employee in the system
+        /// </summary>
+        /// <returns></returns>
         public async Task<Employee> UpdateEmployee()
         {
-            if (!IsValidEmployee())
+            try
             {
-                _dialogService.ShowErrorMessageBox("All fields are mandatory", "Missing data");
-                return null;
-            }
-            var employeeUpdated = await _employeeServiceGateway.UpdateEmployee(SelectedEmployee);
+                if (!IsValidEmployee())
+                {
+                    _dialogService.ShowErrorMessageBox("All fields are mandatory", "Missing data");
+                    return null;
+                }
+                var employeeUpdated = await _employeeServiceGateway.UpdateEmployee(SelectedEmployee);
 
-            //Raise event when employee is added so that the corresponding view can be closed.
-            RequestClose?.Invoke(this, EventArgs.Empty);
-            _dialogService.ShowSuccessMessageBox("Employee updated successfully", "Success");
-            return employeeUpdated;
+                //Raise event when employee is added so that the corresponding view can be closed.
+                RequestClose?.Invoke(this, EventArgs.Empty);
+                _dialogService.ShowSuccessMessageBox("Employee updated successfully", "Success");
+                return employeeUpdated;
+
+            }
+            catch (Exception e)
+            {
+                _dialogService.ShowErrorMessageBox("Error encountered while updating employee, Error Message : " + e.Message, "Error");
+            }
+
+            return null;
         }
         private bool IsValidEmployee()
         {

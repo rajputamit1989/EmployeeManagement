@@ -3,7 +3,6 @@ using EmployeeManagement.BusinessModel;
 using EmployeeManagement.ServiceGateway;
 using Unity;
 
-
 namespace EmployeeManagement.Infrastructure
 {
     public sealed class UnityContainerBootstrapper

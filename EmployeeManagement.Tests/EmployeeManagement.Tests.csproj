@@ -1,16 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoFixture" Version="4.17.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+    <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
     <PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
     <PackageReference Include="coverlet.collector" Version="3.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EmployeeManagement.Application\EmployeeManagement.Application.csproj" />
+    <ProjectReference Include="..\EmployeeManagement.BusinessModel\EmployeeManagement.BusinessModel.csproj" />
+    <ProjectReference Include="..\EmployeeManagement.ServiceGateway\EmployeeManagement.ServiceGateway.csproj" />
   </ItemGroup>
 
 </Project>

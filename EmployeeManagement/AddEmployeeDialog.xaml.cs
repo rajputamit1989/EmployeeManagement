@@ -32,7 +32,7 @@ namespace EmployeeManagement.Presentation
             {
                 if (DataContext is ICloseable)
                 {
-                    (DataContext as ICloseable).RequestClose += (_, __) => this.Close();
+                    (DataContext as ICloseable).RequestClose += (_, _) => this.Close();
                 }
             };
         }
@@ -67,7 +67,7 @@ namespace EmployeeManagement.Presentation
 
         private void TxtName_OnPreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            Regex regex = new Regex("[^a-zA-Z0-9]");
+            Regex regex = new Regex("[^a-zA-Z]");
             e.Handled = regex.IsMatch(e.Text);
         }
     }
