@@ -13,38 +13,66 @@ namespace EmployeeManagement.Application
     public class EmployeeViewModel : ViewModelBase, IEmployeeViewModel
     {
         private readonly IEmployeeServiceGateway _employeeServiceGateway;
-
-        public EmployeeViewModel(IEmployeeServiceGateway employeeServiceGateway)
+        private readonly IDialogService _dialogService;
+        public EmployeeViewModel(IEmployeeServiceGateway employeeServiceGateway, IDialogService dialogService)
         {
             _employeeServiceGateway = employeeServiceGateway;
-            GetAndSetEmployees().ConfigureAwait(false);
-            SetEmployeeIds();
+            _dialogService = dialogService;
+            _currentPage = 1;
+            GetAndSetEmployees().GetAwaiter().GetResult();
         }
-
-        private void SetEmployeeIds()
-        {
-            var employeeIds = Employees.Select(employee => employee.Id).ToList();
-            EmployeeIds = employeeIds.Any() ? new ObservableCollection<int>(Employees.Select(employee => employee.Id).ToList()) : new ObservableCollection<int>();
-        }
-
         private ObservableCollection<Employee> _employees;
-        private ObservableCollection<int> _employeeIds;
-
         private Employee _selectedEmployee;
+        private int _currentPage;
 
         private ICommand _getEmployeesCommand;
         private ICommand _deleteEmployeeCommand;
         private ICommand _resetCommand;
-        private string _searchCriteriaName;
-        private int? _employeeSearchCriteriaId;
+        private ICommand _nextCommand;
+        private ICommand _previousCommand;
 
+        private string _searchCriteria;
+
+        public ICommand NextCommand
+        {
+            get
+            {
+                return _nextCommand ??= new RelayCommand(
+                    async param => await NextCommandHandler(),
+                    null);
+            }
+        }
+
+        private async Task NextCommandHandler()
+        {
+            CurrentPage = CurrentPage + 1;
+            EmployeeSearchCriteria = null;
+            await GetAndSetEmployees();
+        }
+
+        public ICommand PreviousCommand
+        {
+            get
+            {
+                return _previousCommand ??= new RelayCommand(
+                    async param => await PreviousCommandHandler(),
+                    null);
+            }
+        }
+        private async Task PreviousCommandHandler()
+        {
+            if (CurrentPage != 1)
+                CurrentPage = CurrentPage - 1;
+            EmployeeSearchCriteria = null;
+            await GetAndSetEmployees();
+        }
         public ICommand GetEmployeesCommand
         {
             get
             {
-                return _getEmployeesCommand ?? (_getEmployeesCommand = new RelayCommand(
-                    async param => await GetAndSetEmployees((int?) param),
-                    null));
+                return _getEmployeesCommand ??= new RelayCommand(
+                    async param => await GetAndSetEmployees(),
+                    null);
             }
         }
 
@@ -52,9 +80,9 @@ namespace EmployeeManagement.Application
         {
             get
             {
-                return _deleteEmployeeCommand ?? (_deleteEmployeeCommand = new RelayCommand(
+                return _deleteEmployeeCommand ??= new RelayCommand(
                     async param => await DeleteEmployee((Employee) param),
-                    null));
+                    null);
             }
         }
 
@@ -62,20 +90,27 @@ namespace EmployeeManagement.Application
         {
             get
             {
-                return _resetCommand ?? (_resetCommand = new RelayCommand(async param => await Reset(),
-                    null));
+                return _resetCommand ??= new RelayCommand(async param => await ResetEmployees(),
+                    null);
             }
         }
 
-        private async Task Reset()
+        public async Task ResetEmployees()
         {
-            EmployeeSearchCriteriaName = string.Empty;
-            EmployeeSearchCriteriaId = null;
-            //EmployeeSearchCriteria.Id = null;
-            //EmployeeSearchCriteria.Name = string.Empty;
-            //EmployeeSearchCriteria = null; 
+            EmployeeSearchCriteria = string.Empty;
+            CurrentPage = 1;
             SelectedEmployee = null;
             await GetAndSetEmployees();
+        }
+
+        public int CurrentPage
+        {
+            get => _currentPage;
+            set
+            {
+                _currentPage = value;
+                NotifyPropertyChanged("CurrentPage");
+            }
         }
 
         public ObservableCollection<Employee> Employees
@@ -87,44 +122,13 @@ namespace EmployeeManagement.Application
                 NotifyPropertyChanged("Employees");
             }
         }
-
-        public ObservableCollection<int> EmployeeIds
+        public string EmployeeSearchCriteria
         {
-            get => _employeeIds;
+            get => _searchCriteria;
             set
             {
-                _employeeIds = value;
-                NotifyPropertyChanged("EmployeeIds");
-            }
-        }
-
-        //public EmployeeSearchCriteria EmployeeSearchCriteria
-        //{
-        //    get => _searchCriteria;
-        //    set
-        //    {
-        //        _searchCriteria = value;
-        //        NotifyPropertyChanged("EmployeeSearchCriteria");
-        //    }
-        //}
-
-        public string EmployeeSearchCriteriaName
-        {
-            get => _searchCriteriaName;
-            set
-            {
-                _searchCriteriaName = value;
-                NotifyPropertyChanged("EmployeeSearchCriteriaName");
-            }
-        }
-
-        public int? EmployeeSearchCriteriaId
-        {
-            get => _employeeSearchCriteriaId;
-            set
-            {
-                _employeeSearchCriteriaId = value;
-                NotifyPropertyChanged("EmployeeSearchCriteriaId");
+                _searchCriteria = value;
+                NotifyPropertyChanged("EmployeeSearchCriteria");
             }
         }
 
@@ -144,35 +148,34 @@ namespace EmployeeManagement.Application
             {
                 await _employeeServiceGateway.DeleteEmployee(employee.Id);
                 Employees.Remove(employee);
-                SetEmployeeIds();
             }
         }
 
-        public async Task GetAndSetEmployees(int? page = null)
+        public async Task GetAndSetEmployees()
         {
-            //Search by ID if ID is entered by user
-            if (_employeeSearchCriteriaId.HasValue)
+            if (!string.IsNullOrEmpty(_searchCriteria))
             {
-                bool isValidInputId = Int32.TryParse(Convert.ToString(_employeeSearchCriteriaId), out int employeeSearchCriteriaId);
-                if (!isValidInputId)
-                    return;
-                Employees = new ObservableCollection<Employee>()
-                {
-                    await _employeeServiceGateway.GetEmployeeById(employeeSearchCriteriaId)
-                };
-                return;
-            }
+                //First check if user is searching by employee id
 
-            //Search by Name if Name is entered by user
-            string name = _searchCriteriaName;
-            if (!string.IsNullOrEmpty(name))
-            {
-                Employees = new ObservableCollection<Employee>(await _employeeServiceGateway.GetEmployeesByName(name));
+                bool isValidInputId = Int32.TryParse(_searchCriteria, out int employeeSearchCriteriaId);
+                if (isValidInputId)
+                {
+                    var employeeFound = await _employeeServiceGateway.GetEmployeeById(employeeSearchCriteriaId);
+                    Employees = employeeFound.Id != 0 ? new ObservableCollection<Employee>(){ employeeFound } : null;
+                    CurrentPage = 1;
+                    return;
+                }
+
+                //Next case :It is a search by employee name
+                string name = _searchCriteria;
+                var employeesFound = await _employeeServiceGateway.GetEmployeesByName(name);
+                    Employees = employeesFound.Any()?new ObservableCollection<Employee>(employeesFound):null;
+                    CurrentPage = 1;
                 return;
+
             }
             //Return all records if there is no search criteria
-            Employees = new ObservableCollection<Employee>(await _employeeServiceGateway.GetEmployees(page));
-
+            Employees = new ObservableCollection<Employee>(await _employeeServiceGateway.GetEmployees(_currentPage).ConfigureAwait(false));
         }
     }
 }

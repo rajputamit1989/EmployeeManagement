@@ -5,8 +5,49 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EmployeeManagement.Presentation"
         mc:Ignorable="d"
-        Title="AddEmployeeDialog" Height="450" Width="800">
-    <Grid>
-        
+        Title="Add Employee Dialog" Height="230" Width="400" ResizeMode="CanResize" >
+    <Grid Margin="5 20 5 5" Width="300" >
+
+        <Grid.RowDefinitions >
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions >
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock TextAlignment="Center" Text="Name" Grid.Row="0" Grid.Column="0" Margin="0 10 0 0 "/>
+        <TextBlock TextAlignment="Center"  Text="Email" Grid.Row="1" Grid.Column="0" Margin="0 10 0 0 "/>
+        <TextBlock TextAlignment="Center"  Text="Gender" Grid.Row="2" Grid.Column="0" Margin="0 10 0 0 "/>
+        <TextBlock TextAlignment="Center"  Text="Status" Grid.Row="3" Grid.Column="0" Margin="0 10 0 0 "/>
+
+        <TextBox x:Name="TxtName" Text="{Binding NewEmployee.Name}" PreviewTextInput="TxtName_OnPreviewTextInput" Grid.Column="1" Grid.Row="0" Margin="0 10 0 0 "/>
+        <TextBox x:Name="TxtEmail" Text="{Binding NewEmployee.Email}" Grid.Column="1" Grid.Row="1" PreviewLostKeyboardFocus="txtEmail_LostFocus" Margin="0 10 0 0 " />
+      
+        <ComboBox HorizontalAlignment="Left"  Grid.Column="1" Grid.Row="2"   
+                  Margin="0 10 0 0 "
+                  VerticalAlignment="Top"   
+                  Width="120"   
+                  Text="{Binding Path=NewEmployee.Gender}"  
+                  >
+            <ComboBoxItem Content="Male" IsSelected="True"></ComboBoxItem>
+            <ComboBoxItem Content="Female"></ComboBoxItem>
+        </ComboBox>
+        <ComboBox HorizontalAlignment="Left"  Grid.Column="1" Grid.Row="3"   
+                  Margin="0 10 0 0 "
+                  VerticalAlignment="Top"   
+                  Width="120"   
+                  Text="{Binding Path=NewEmployee.Status}"  
+        >
+            <ComboBoxItem Content="Active" IsSelected="True"></ComboBoxItem>
+            <ComboBoxItem Content="Inactive"></ComboBoxItem>
+        </ComboBox>
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5,10,5,5">
+            <Button  Foreground="White" Background="DarkOliveGreen" Content="Save" Command="{Binding AddEmployeeCommand }" Margin="4,0" Width="46"/>
+            <Button Foreground="White" Background="DarkOliveGreen" Content="Cancel" Click="Cancel_Click" Margin="4,0" Width="52" />
+        </StackPanel>
     </Grid>
 </Window>

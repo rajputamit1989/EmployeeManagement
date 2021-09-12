@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,20 +12,25 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using EmployeeManagement.Application;
+using EmployeeManagement.BusinessModel;
 using EmployeeManagement.Infrastructure;
 using Unity;
 
 namespace EmployeeManagement.Presentation
 {
     /// <summary>
-    /// Interaction logic for AddEmployeeDialog.xaml
+    /// Interaction logic for UpdateEmployeeDialog.xaml
     /// </summary>
-    public partial class AddEmployeeDialog : Window
+    public partial class UpdateEmployeeDialog : Window
     {
-        public AddEmployeeDialog()
+        public UpdateEmployeeDialog(Employee employee)
         {
             InitializeComponent();
-            DataContext = UnityContainerBootstrapper.Container.Resolve<IAddEmployeeViewModel>() as AddEmployeeViewModel;
+            if (UnityContainerBootstrapper.Container.Resolve<IUpdateEmployeeViewModel>() is UpdateEmployeeViewModel vm)
+            {
+                vm.SelectedEmployee = employee;
+                DataContext = vm;
+            }
 
             Loaded += (s, e) =>
             {
@@ -63,12 +67,6 @@ namespace EmployeeManagement.Presentation
             {
                 return false;
             }
-        }
-
-        private void TxtName_OnPreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^a-zA-Z0-9]");
-            e.Handled = regex.IsMatch(e.Text);
         }
     }
 }

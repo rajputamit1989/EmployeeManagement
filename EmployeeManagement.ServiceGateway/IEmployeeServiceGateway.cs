@@ -14,9 +14,9 @@ namespace EmployeeManagement.ServiceGateway
 
         Task<List<Employee>> GetEmployeesByName(string name);
 
-        Task<Employee> AddEmployee(int employeeId);
+        Task<Employee> AddEmployee(Employee employee);
 
-        Task<Employee> UpdateEmployee(int employeeId);
+        Task<Employee> UpdateEmployee(Employee employee);
 
         Task<Employee> DeleteEmployee(int employeeId);
 

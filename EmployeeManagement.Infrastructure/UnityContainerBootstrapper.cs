@@ -1,4 +1,5 @@
 ﻿using EmployeeManagement.Application;
+using EmployeeManagement.BusinessModel;
 using EmployeeManagement.ServiceGateway;
 using Unity;
 
@@ -37,15 +38,9 @@ namespace EmployeeManagement.Infrastructure
         {
             _container.RegisterType<IEmployeeViewModel, EmployeeViewModel>(TypeLifetime.ContainerControlled);
             _container.RegisterType<IEmployeeServiceGateway, EmployeeServiceGateway>(TypeLifetime.ContainerControlled);
-            //_container.RegisterType<IPropertyRepository, PropertyRepository>(TypeLifetime.ContainerControlled);
-            //_container.RegisterType<IDatabaseGateway, DatabaseGateway>(TypeLifetime.ContainerControlled);
-            //_container.RegisterType<IConnectionString, ConnectionString>(TypeLifetime.ContainerControlled);
-            //_container.RegisterType<IAddEntityDialogViewModel, AddEntityDialogViewModel>(); //Transient design pattern as per design choice
-            //_container.RegisterType<IPropertiesDialogViewModel, PropertiesDialogViewModel>();//Transient design pattern as per design choice
-            //_container.RegisterType<IEventAggregator, EventAggregator>(TypeLifetime.Singleton); //Its always singleton as per design
-            //_container.RegisterType<IEntityFactory, EntityFactory>(); //Transient
-            //_container.RegisterType<IPropertyFactory, PropertyFactory>(); // Transient
-
+            _container.RegisterType<IAddEmployeeViewModel, AddEmployeeViewModel>(TypeLifetime.Transient);
+            _container.RegisterType<IUpdateEmployeeViewModel, UpdateEmployeeViewModel>(TypeLifetime.ContainerControlled);
+            _container.RegisterType<IDialogService, DialogService>(TypeLifetime.ContainerControlled);
         }
     }
 

@@ -4,10 +4,8 @@ using EmployeeManagement.BusinessModel;
 
 namespace EmployeeManagement.Application
 {
-    public interface IEmployeeViewModel
+    public interface IUpdateEmployeeViewModel
     {
-        Task GetAndSetEmployees();
-        Task DeleteEmployee(Employee employee);
-        Task ResetEmployees();
+        Task<Employee> UpdateEmployee();
     }
 }

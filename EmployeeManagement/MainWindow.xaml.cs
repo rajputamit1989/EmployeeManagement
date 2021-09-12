@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using EmployeeManagement.BusinessModel;
 
 namespace EmployeeManagement.Presentation
 {
@@ -34,8 +35,15 @@ namespace EmployeeManagement.Presentation
 
         private void TextValidationTextBox(object sender, TextCompositionEventArgs e)
         {
-            Regex regex = new Regex("[^a-zA-Z]+");
+            Regex regex = new Regex("[^a-zA-Z0-9]");
             e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void BtnUpdate_OnClick(object sender, RoutedEventArgs e)
+        {
+            var selectedEmployee = (sender as Button)?.DataContext as Employee;
+            var updateEmployeeDialog = new UpdateEmployeeDialog(selectedEmployee);
+            updateEmployeeDialog.ShowDialog();
         }
     }
 }

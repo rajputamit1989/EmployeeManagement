@@ -4,12 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Employee Management" Height="450" Width="800" FontWeight="Bold" FontSize="12">
+        Title="Employee Management" FontWeight="Bold" Height="Auto" Width="800"  FontSize="12" WindowState="Maximized">
     <Grid >
         <Grid.RowDefinitions>
-            <RowDefinition Height="289*"/>
-            <RowDefinition Height="0*"/>
-            <RowDefinition Height="145*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,4">
             <GroupBox Header="Employee Search or Add" Margin="5,5,5,5">
@@ -26,21 +24,13 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock  Grid.Row="0" Grid.Column="0" Text="Employee Id" TextAlignment="Center"/>
-                    <!--<TextBox Grid.Row="0" Grid.Column="1" PreviewTextInput="NumberValidationTextBox"  Text="{Binding EmployeeSearchCriteriaId, Mode=TwoWay}"/>-->
-                    <ComboBox x:Name="CmbId" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding EmployeeIds,Mode=TwoWay}" SelectedValue="{Binding EmployeeSearchCriteriaId, Mode=TwoWay}" SelectedItem="{Binding EmployeeSearchCriteriaId, Mode=TwoWay}" ></ComboBox>
-                    <TextBlock  Grid.Row="0" Grid.Column="2" Text="OR" FontWeight="Bold" TextAlignment="Center" Grid.ColumnSpan="2" Margin="0,0,152,40" Grid.RowSpan="2"/>
-
-                    <TextBlock  Grid.Row="0" Grid.Column="3" Text="Employee Name" TextAlignment="Center" Grid.ColumnSpan="2" Margin="0,0,181,40" Grid.RowSpan="2"  Width="198"/>
-                    <TextBox Grid.Row="0" Grid.Column="4" PreviewTextInput="TextValidationTextBox" Text="{Binding EmployeeSearchCriteriaName, Mode=TwoWay}"/>
-
-                    <StackPanel Grid.Column="0" Grid.Row="1"   Orientation="Horizontal" Grid.ColumnSpan="4" HorizontalAlignment="Right" Margin="0,16,136,4">
-                        <Button Foreground="White" Background="DarkOliveGreen" Content="Search" Width="70" Command="{Binding GetEmployeesCommand}" Margin="4,0"/>
-                        <Button Foreground="White" Background="DarkOliveGreen" Content="Reset" Width="70" Command="{Binding ResetCommand}" Margin="4,0"/>
-                        <Button Foreground="White" Background="DarkOliveGreen" Content="Add New Employee" Width="Auto" Click="btn_AddEmployee"  Margin="4,0" Height="29"/>
+                    <TextBlock  Grid.Row="0" Grid.Column="0" Text="Employee Id or Employee Name" TextAlignment="Left" Margin="10,0,10,42" Grid.RowSpan="2" RenderTransformOrigin="1.061,0.374" />
+                    <TextBox Grid.Row="0" Grid.Column="1" Margin="0,0,31,49" PreviewTextInput="TextValidationTextBox" Text="{Binding EmployeeSearchCriteria, Mode=TwoWay}" Grid.RowSpan="2"/>
+                    <StackPanel Grid.Column="0" Grid.Row="1"   Orientation="Horizontal" Grid.ColumnSpan="4" HorizontalAlignment="Left" Margin="0,16,136,4">
+                        <Button Foreground="White" Background="DarkOliveGreen" Content="Search" Width="70" Command="{Binding GetEmployeesCommand}" Margin="4,0" Height="26"/>
+                        <Button Foreground="White" Background="DarkOliveGreen" Content="Reset" Width="70" Command="{Binding ResetCommand}" Margin="4,0" Height="26"/>
+                        <Button Foreground="White" Background="DarkOliveGreen" Content="Add New Employee" Width="130" Click="btn_AddEmployee"  Margin="4,0" Height="26"/>
                     </StackPanel>
-
-
                 </Grid>
             </GroupBox>
 
@@ -53,7 +43,7 @@
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5,5,5,5">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
-                                <DataGrid IsReadOnly="True" ColumnWidth="100" x:Name="Dg1" ItemsSource="{Binding Employees,Mode=TwoWay}"  CanUserAddRows="False"  CanUserDeleteRows="False" SelectionMode="Single" VerticalAlignment="Top" AutoGenerateColumns="False" Margin="5,5,5,5">
+                                <DataGrid IsReadOnly="True" ColumnWidth="Auto" x:Name="Dg1" ItemsSource="{Binding Employees,Mode=TwoWay}"  CanUserAddRows="False"  CanUserDeleteRows="False" SelectionMode="Single" VerticalAlignment="Top" AutoGenerateColumns="False" Margin="5,5,5,5">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Employee ID" Binding="{Binding Path=Id}"></DataGridTextColumn>
                                         <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}"></DataGridTextColumn>
@@ -70,12 +60,24 @@
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn >
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button x:Name="BtnUpdate" Content="Update" Click="BtnUpdate_OnClick"
+                                                           />
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
-                    <!--<Button Grid.Row="1" Content="Add Employee" Command="{Binding AddUserCommand}" Margin="5" Focusable="False" HorizontalAlignment="Left" MinWidth="200"/>-->
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="15 ">
+                        <Button Foreground="White"  Background="DarkOliveGreen"  Content="Previous" Command="{Binding PreviousCommand}"></Button>
+                        <Label Margin="10 0 10 0 " Content="{Binding CurrentPage,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></Label>
+                        <Button Foreground="White"  Background="DarkOliveGreen" Content="Next" Command="{Binding NextCommand}"></Button>
+                    </StackPanel>
                 </Grid>
             </GroupBox>
 
