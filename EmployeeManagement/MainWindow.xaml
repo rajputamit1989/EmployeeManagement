@@ -43,7 +43,7 @@
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5,5,5,5">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
-                                <DataGrid IsReadOnly="True" ColumnWidth="Auto" x:Name="Dg1" ItemsSource="{Binding Employees,Mode=TwoWay}"  CanUserAddRows="False"  CanUserDeleteRows="False" SelectionMode="Single" VerticalAlignment="Top" AutoGenerateColumns="False" Margin="5,5,5,5">
+                                <DataGrid  x:Name="DgEmployees" IsReadOnly="True" ColumnWidth="Auto" ItemsSource="{Binding Employees,Mode=TwoWay}"  CanUserAddRows="False"  CanUserDeleteRows="False" SelectionMode="Single" VerticalAlignment="Top" AutoGenerateColumns="False" Margin="5,5,5,5">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Employee ID" Binding="{Binding Path=Id}"></DataGridTextColumn>
                                         <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}"></DataGridTextColumn>
@@ -77,6 +77,8 @@
                         <Button Foreground="White"  Background="DarkOliveGreen"  Content="Previous" Command="{Binding PreviousCommand}"></Button>
                         <Label Margin="10 0 10 0 " Content="{Binding CurrentPage,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></Label>
                         <Button Foreground="White"  Background="DarkOliveGreen" Content="Next" Command="{Binding NextCommand}"></Button>
+                        <Button Foreground="White"  Background="DarkOliveGreen" Margin=" 15 0 0 0" Content="Export to Excel" x:Name="BtnExport" Click="BtnExport_OnClick"></Button>
+
                     </StackPanel>
                 </Grid>
             </GroupBox>

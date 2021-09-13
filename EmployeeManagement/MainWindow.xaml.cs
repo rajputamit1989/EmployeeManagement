@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using EmployeeManagement.BusinessModel;
+using Button = System.Windows.Controls.Button;
+using Window = System.Windows.Window;
 
 namespace EmployeeManagement.Presentation
 {
@@ -44,6 +36,22 @@ namespace EmployeeManagement.Presentation
             var selectedEmployee = (sender as Button)?.DataContext as Employee;
             var updateEmployeeDialog = new UpdateEmployeeDialog(selectedEmployee);
             updateEmployeeDialog.ShowDialog();
+        }
+
+        private void BtnExport_OnClick(object sender, RoutedEventArgs e)
+        {
+            DgEmployees.SelectionMode = DataGridSelectionMode.Extended;
+            DgEmployees.SelectAllCells();
+            DgEmployees.ClipboardCopyMode = DataGridClipboardCopyMode.IncludeHeader;
+            ApplicationCommands.Copy.Execute(null, DgEmployees);
+            String result = (string)Clipboard.GetData(DataFormats.Text);
+            DgEmployees.UnselectAllCells();
+            System.IO.StreamWriter file1 = new System.IO.StreamWriter(@"Employees.xls");
+            file1.WriteLine(result.Replace(',', ' '));
+            
+            file1.Close();
+            DgEmployees.SelectionMode = DataGridSelectionMode.Single;
+            MessageBox.Show(" Employees information exported to Employees.xls in your application directory", "Export Success",MessageBoxButton.OK,MessageBoxImage.Information);
         }
     }
 }
